@@ -74,6 +74,31 @@ public class MainActivity extends FragmentActivity {
         setListener();
         //初始化ui
         setData();
+
+        /*
+        * 使用封装的方法
+        * */
+//        DownloadHelper.download(APK_URL, "", new DownloadHelper.OnDownloadListener() {
+//            @Override
+//            public void onStart() {
+//
+//            }
+//
+//            @Override
+//            public void onSuccess(int code, File file) {
+//
+//            }
+//
+//            @Override
+//            public void onFail(int code, File file, String message) {
+//
+//            }
+//
+//            @Override
+//            public void onProgress(int progress) {
+//
+//            }
+//        });
     }
 
     private void setData() {
