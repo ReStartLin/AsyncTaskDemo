@@ -19,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -113,7 +114,7 @@ public class MainActivity extends FragmentActivity {
             public void onClick(View v) {
 //                下载的事情
                 // TODO: 2018/1/6 下载任务
-                DownloadAsyncTask asyncTask = new DownloadAsyncTask();
+                DownloadAsyncTask asyncTask = new DownloadAsyncTask(MainActivity.this);
                 asyncTask.execute(APK_URL);
             }
         });
@@ -130,8 +131,14 @@ public class MainActivity extends FragmentActivity {
     }
 
     public class DownloadAsyncTask extends AsyncTask<String, Integer, Boolean> {
+        private WeakReference<MainActivity> weakReference;
 
         private String mFilePath;
+
+
+        DownloadAsyncTask(MainActivity activity) {
+            this.weakReference =new WeakReference<>(activity);
+        }
 
         /**
          * 在异步任务之前  主线程
@@ -140,9 +147,9 @@ public class MainActivity extends FragmentActivity {
         protected void onPreExecute() {
             super.onPreExecute();
 //            可操作UI 准备工作
-            button.setText(R.string.downloading);
-            textView.setText(R.string.downloading);
-            progressBar.setProgress(INIT_PROGRESS);
+            weakReference.get().button.setText(R.string.downloading);
+            weakReference.get().textView.setText(R.string.downloading);
+            weakReference.get(). progressBar.setProgress(INIT_PROGRESS);
         }
 
         /**
@@ -216,8 +223,8 @@ public class MainActivity extends FragmentActivity {
         protected void onPostExecute(Boolean aBoolean) {
             super.onPostExecute(aBoolean);
             //也是在主线程中，可以执行结果处理
-            button.setText(aBoolean?"下载完成":"下载失败");
-            textView.setText(aBoolean?"下载完成"+mFilePath:"下载失败");
+            weakReference.get().button.setText(aBoolean?"下载完成":"下载失败");
+            weakReference.get().textView.setText(aBoolean?"下载完成"+mFilePath:"下载失败");
         }
 
         @Override
@@ -225,7 +232,7 @@ public class MainActivity extends FragmentActivity {
             super.onProgressUpdate(values);
 //            ui线程  收到进度 处理
             if (values != null && values.length>0) {
-                progressBar.setProgress(values[0]);
+                weakReference.get().progressBar.setProgress(values[0]);
             }
 
         }
